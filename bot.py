@@ -5,6 +5,7 @@ import os
 import ast
 import time
 from inOut import *
+import pywapi
 
 
 def analyse_and_output(message):
@@ -14,10 +15,25 @@ def analyse_and_output(message):
 	if text[0:4] == "echo":
 		post(text[4:])
 		count = count + 1
-	for x in range (0, len(text) - 8):
-		if text[x:x+6] == "underg" or text[x:x+8] == "under gr":
-			post("FUCK THE POLICE")
-			post("coming straight from the underground")
+	if "underground" in text or "under ground" in text:
+		post("FUCK THE POLICE")
+		post("coming straight from the underground")
+		count = count + 2
+	if "weather" in text:
+		weath = pywapi.get_weather_from_weather_com('15213', 'imperial')
+		if weath['current_conditions']['temperature'] != weath['current_conditions']['feels_like']:
+			post("but it feels like" + weath['current_conditions']['feels_like'])
+			count = count + 1
+		if "today" in text:
+			post("The high today is " + weath['forecasts'][0]['high'] + " and the low is " + weath['forecasts'][0]['low'])
+			count = count + 1
+		elif "tomo" in text:
+			post("Tomorrow will be " + weath['forecasts'][1]['day']['text'])
+			post("The high tomorrow is " + weath['forecasts'][1]['high'] + " and the low is " + weath['forecasts'][1]['low'])
+			count = count + 2
+		else:
+			post("Today it is " + weath['current_conditions']['text'])
+			post("It is " + weath['current_conditions']['temperature'] + "F" )
 			count = count + 2
 	return count
 

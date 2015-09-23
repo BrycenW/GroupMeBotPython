@@ -31,7 +31,11 @@ def cleanup_string(dirty_string):
 
 def pull_message(seeking_num):
 	payload = {"limit":1, "token":"dbce80c042ef0133562d05f0d49317f6"}
-	dirty_packet = requests.get("https://api.groupme.com/v3/groups/16326365/messages", params=payload)
+	try :
+		dirty_packet = requests.get("https://api.groupme.com/v3/groups/16326365/messages", params=payload)
+	except requests.exceptions.ConnectionError:
+		time.sleep(.5)
+		return {'count':str(message_number)}
 	message_number = grab_message_number(dirty_packet.content)
 	if message_number < seeking_num:
 		return {'count':str(message_number)}
@@ -46,7 +50,11 @@ def seek(seeking_num):
 
 def post(text):
 	payload = {"text":text, "bot_id":"7e819111ff8f330b299db0679f"}
-	requests.post("https://api.groupme.com/v3/bots/post", params=payload)
+	try:
+		requests.post("https://api.groupme.com/v3/bots/post", params=payload)
+	except requests.exception.ConnectionError:
+		time.sleep(1)
+		post(text)
 
 def analyse_and_output(message):
 	text = message['text']
