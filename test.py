@@ -1,1 +1,1 @@
-print "Fuck your shit"
+return True
