@@ -2,7 +2,7 @@ import pywapi
 
 temp = pywapi.get_weather_from_weather_com('15213', 'imperial')
 print temp['forecasts'][0]['high']
-print temp['temperature']
+print temp['current_conditions']['temperature']
 #{'units': {'distance': u'mi', 'speed': u'mph', 'temperature': u'F', 'rainfall': u'in', 'pressure': u'in'}, 
 #'current_conditions': {'moon_phase': {'text': u'Waxing Gibbous', 'icon': u'9'}, 
 #'last_updated': u'9/23/15 7:25 PM EDT', 
