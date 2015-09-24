@@ -1,1 +1,3 @@
-return False
+import unittest
+from bot import *
+
