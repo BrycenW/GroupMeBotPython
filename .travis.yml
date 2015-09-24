@@ -3,6 +3,6 @@ python:
     - "2.6"
     - "2.7"
 install: 
-    - pip install -r requirements.txt --allow-all-external
+    - pip install -r requirements.txt --allow-all-external --allow-unverified pywapi
 script: 
     - python -m unittest discover ./tests 
