@@ -1,3 +1,3 @@
 import unittest
-from bot import *
+from testbed import *
 
