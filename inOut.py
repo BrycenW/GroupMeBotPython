@@ -3,7 +3,10 @@ import requests
 import os
 import ast
 import time
-from inOut import *
+
+null = ""
+false = "false"
+true = "true"
 
 def test():
 	print "you good"
@@ -35,7 +38,7 @@ def pull_message(seeking_num):
 		dirty_packet = requests.get("https://api.groupme.com/v3/groups/16326365/messages", params=payload)
 	except requests.exceptions.ConnectionError:
 		time.sleep(.5)
-		return {'count':str(message_number)}
+		return {'count':str(seeking_num)}
 	message_number = grab_message_number(dirty_packet.content)
 	if message_number < seeking_num:
 		return {'count':str(message_number)}
@@ -44,9 +47,35 @@ def pull_message(seeking_num):
 	out_dict['count'] = str(message_number)
 	return out_dict
 
+def get_group_info(group_id):
+	payload = {"token":"dbce80c042ef0133562d05f0d49317f6"}
+	try :
+		dirty_packet = requests.get("https://api.groupme.com/v3/groups/" + str(group_id), params=payload)
+	except requests.exceptions.ConnectionError:
+		time.sleep(1)
+		return get_group_info(group_id)
+	out_dict = eval(dirty_packet.content)
+	return out_dict['response']
+
+def pull_next_message(previous_id):
+	payload = {"limit":1, "after_id":previous_id, "token":"dbce80c042ef0133562d05f0d49317f6"}
+	try:
+		dirty_packet = requests.get("https://api.groupme.com/v3/groups/16326365/messages", params=payload)
+	except requests.exceptions.ConnectionError:
+		time.sleep(.5)
+		return 1
+	if "200" not in str(dirty_packet):
+		return 1
+	#clean_string = cleanup_string(dirty_packet.content)
+	out_dict = eval(dirty_packet.content)["response"]["messages"]
+	if len(out_dict) == 0:
+		return 1
+	out_dict = out_dict[0]
+	out_dict['count'] = str(grab_message_number(dirty_packet.content))
+	return out_dict
+
 def seek(seeking_num):
 	return pull_message(seeking_num)
-
 
 def post(text):
 	payload = {"text":text, "bot_id":"7e819111ff8f330b299db0679f"}
@@ -55,6 +84,11 @@ def post(text):
 	except requests.exception.ConnectionError:
 		time.sleep(1)
 		post(text)
+
+def get_likes(previous_id):
+	message = pull_next_message(previous_id)
+	return message["favorited_by"]
+
 
 def analyse_and_output(message):
 	text = message['text']

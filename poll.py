@@ -1,0 +1,159 @@
+from inOut import *
+
+#[[text, previous message, [sender_id... ]... ]
+
+
+def grab_next_message_checkbot(id):
+	waiting = 1
+	i = 0
+	while(waiting == 1):
+		print("pulling")
+		time.sleep(1)
+		next_message = pull_next_message(id)
+		if (next_message != 1):
+			waiting = 0
+		i = i + 1
+	if next_message['sender_type'] == "bot":
+		print "bot"
+		return {"sender_type":"bot", "id":next_message["id"]}
+	print "acheive"
+	return next_message
+
+def combine_items(array, first, second):
+	which_name = raw_input("Between " + array[first][0] + " and " +
+		array[second][0] + " would you like (f)ormer, (l)atter, or (d)on't combine? Reply f, l, or d?")
+	if which_name == "d":
+		return array
+	elif which_name == "f":
+		for i in range (0, len(array[second][2]) - 1):
+			array[first][2].append(array[second][2][i])
+		del array[second]
+	elif which_name == "l":
+		for i in range (0, len(array[first][2]) - 1):
+			array[second][2].append(array[first][2][i])
+		del array[first]
+	else:
+		print("Fuck your input")
+		return combine_items(array, first, second)
+	return array
+
+def poll_open_end(name, question, group_id):
+	working_id = pull_message(0)['id']
+	post("Hello eveyone, I am the poll bot, and " + name +
+		" wants me ask everyone a question. Only your first reply after this " +
+		"message will count, so don't be shitty")
+	post(question)
+	full_member_info = get_group_info(group_id)["members"]
+	print full_member_info
+	not_voted_id = []
+	print not_voted_id
+	print len(full_member_info)
+	for i in range (0, len(full_member_info)):
+		print "check"
+		print i
+		not_voted_id.append(full_member_info[i]["user_id"])
+	print not_voted_id
+	user_responces = []
+	for i in range (0, 1000):
+		for i in range(0, 1000):
+			working_message = grab_next_message_checkbot(working_id)
+			if working_message["sender_type"] == "bot":
+				working_id = working_message["id"]
+			else:
+				break
+		if "fuck you bot" in working_message["text"]:
+			post("I'm fucking off")
+			return user_responces
+		if working_message["sender_id"] in not_voted_id:
+			not_voted_id.remove(working_message["sender_id"])
+			print working_message["name"] + " said " + working_message["text"]
+			user_responces.append([working_message["text"], working_id,
+				[working_message["sender_id"]]])
+			print str(len(user_responces)) + " people have responded"
+			if len(not_voted_id) == 0:
+				print "Everyone has voted!"
+				return user_responces
+			if "n" in raw_input("Would you like to continue getting responces? "):
+				return user_responces
+		print working_message["sender_id"] + " not in " + str(not_voted_id)
+		working_id = working_message["id"]
+	return user_responces
+
+def generate_string_from_responces(options):
+	string_options = ""
+	for i in range (0, len(options)):
+		string_options = string_options + " " + str(i) + ": " + str(options[i][0])
+	return string_options
+
+def combine_responces(options):
+	last_index = len(options) - 1
+	for i in range (0, last_index):
+		for j in range (i + 1, len(options)):
+			a_text = options[last_index - i][0]
+			b_text = options[last_index - j][0]
+			a_text.lower
+			b_text.lower
+			a_text.replace(" ", "")
+			b_text.replace(" ", "")
+			if a_text in b_text or b_text in a_text:
+				options = combine_items(options, last_index - i, last_index - j)
+				j = j - 1
+	print "The responces are " + generate_string_from_responces(options)
+	while "y" in raw_input("Would you like to combine any options? "):
+			first = int(raw_input("What is the index of one? "))
+			second = int(raw_input("What is the index of the other? "))
+			combine_items(options, first, second)
+	return options
+
+def assure_no_double(array):
+	for i in range(0, len(array)):
+		to_be_deleted = []
+		for j in range(0, len(array[i][2]) - 1):
+			for k in range (j + 1, len(array[i][2])):
+				if array[i][2][j] == array[i][2][k]:
+					to_be_deleted.append(k)
+		for l in range(0, len(to_be_deleted)):
+			del array[i][2][l]
+
+
+	return array
+
+def sort_by_votes(dirty_results):
+	results = assure_no_double(dirty_results)
+	for i in range(0, len(results) - 1):
+		for j in range(i, len(results) - 1):
+			if len(results[i][2]) < len(results[i][2]):
+				temp = results [i]
+				results[i] = results [j]
+				results[j] = temp
+	return results
+
+def consider_likes(results):
+	for i in range(0, len(results)):
+		results[i][2] = results[i][2] + get_likes(results[i][1])
+	return results
+
+def poll():
+	group_id = pull_message(0)["group_id"]
+	name = raw_input("What is your name? ")
+	question = raw_input("What question would you like to pose? ")
+	if "y" in raw_input("Is this an open ended question? "):
+		responces = poll_open_end(name, question, group_id)
+	else:
+		print "more shit to be added later"
+		return 0
+	if "n" in raw_input("Would you like to consider likes? "):
+		return sort_by_votes(combine_responces(responces))
+	raw_input("Input anything to count likes: ")
+	return sort_by_votes(combine_responces(consider_likes(responces)))
+
+def pretty_display(results):
+	for i in range(0, len(results)):
+		print str(i + 1) + ". " + results[i][0] + " with " + str(len(results[i][2])) + " votes"
+
+pretty_display([['Hopefully ', '144358526876150475', ['30101203', '30109452']], ['Yes', '144358529711187812', ['30101203', '30109452']]])
+#pretty_display(poll())
+#print pull_message(0)
+#print get_group_info(16326365)
+#print poll_open_end("Brycen", "What is love?", 16326365)
+#print get_group_info(16326365)
