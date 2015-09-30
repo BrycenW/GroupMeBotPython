@@ -1,7 +1,12 @@
 from inOut import *
 
 #[[text, previous message, [sender_id... ]... ]
-
+#bot_id = "7e819111ff8f330b299db0679f"
+#group_id = "16326365"
+#
+token = "dbce80c042ef0133562d05f0d49317f6"
+bot_id = "7446fe4e7613b1fdf37b00d430"
+group_id = "15781720"
 
 def grab_next_message_checkbot(id):
 	waiting = 1
@@ -9,7 +14,7 @@ def grab_next_message_checkbot(id):
 	while(waiting == 1):
 		print("pulling")
 		time.sleep(1)
-		next_message = pull_next_message(id)
+		next_message = pull_next_message(id, token, group_id)
 		if (next_message != 1):
 			waiting = 0
 		i = i + 1
@@ -37,13 +42,13 @@ def combine_items(array, first, second):
 		return combine_items(array, first, second)
 	return array
 
-def poll_open_end(name, question, group_id):
-	working_id = pull_message(0)['id']
+def poll_open_end(name, question):
+	working_id = pull_message(0, token, group_id)['id']
 	post("Hello eveyone, I am the poll bot, and " + name +
 		" wants me ask everyone a question. Only your first reply after this " +
-		"message will count, so don't be shitty")
-	post(question)
-	full_member_info = get_group_info(group_id)["members"]
+		"message will count, so don't be shitty", bot_id)
+	post(question, bot_id)
+	full_member_info = get_group_info(group_id, token)["members"]
 	print full_member_info
 	not_voted_id = []
 	print not_voted_id
@@ -62,7 +67,7 @@ def poll_open_end(name, question, group_id):
 			else:
 				break
 		if "fuck you bot" in working_message["text"]:
-			post("I'm fucking off")
+			post("I'm fucking off", bot_id)
 			return user_responces
 		if working_message["sender_id"] in not_voted_id:
 			not_voted_id.remove(working_message["sender_id"])
@@ -130,30 +135,27 @@ def sort_by_votes(dirty_results):
 
 def consider_likes(results):
 	for i in range(0, len(results)):
-		results[i][2] = results[i][2] + get_likes(results[i][1])
+		results[i][2] = results[i][2] + get_likes(results[i][1], token, group_id)
 	return results
 
 def poll():
-	group_id = pull_message(0)["group_id"]
 	name = raw_input("What is your name? ")
 	question = raw_input("What question would you like to pose? ")
 	if "y" in raw_input("Is this an open ended question? "):
-		responces = poll_open_end(name, question, group_id)
+		responces = poll_open_end(name, question)
 	else:
 		print "more shit to be added later"
 		return 0
 	if "n" in raw_input("Would you like to consider likes? "):
 		return sort_by_votes(combine_responces(responces))
+	post("Likes will be considered, so make sure to like your favorites!", bot_id)
 	raw_input("Input anything to count likes: ")
 	return sort_by_votes(combine_responces(consider_likes(responces)))
 
 def pretty_display(results):
 	for i in range(0, len(results)):
 		print str(i + 1) + ". " + results[i][0] + " with " + str(len(results[i][2])) + " votes"
+	post("The top answer is " + results[0][0] + " with " +
+		str(len(results[0][2])) + " votes", bot_id)
 
-pretty_display([['Hopefully ', '144358526876150475', ['30101203', '30109452']], ['Yes', '144358529711187812', ['30101203', '30109452']]])
-#pretty_display(poll())
-#print pull_message(0)
-#print get_group_info(16326365)
-#print poll_open_end("Brycen", "What is love?", 16326365)
-#print get_group_info(16326365)
+pretty_display(poll())
