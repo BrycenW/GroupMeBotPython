@@ -3,9 +3,6 @@ import requests
 import os
 import ast
 import time
-#Brycen token dbce80c042ef0133562d05f0d49317f6
-#testgroup 16326365
-#bitch id 7e819111ff8f330b299db0679f
 
 null = ""
 false = "false"
@@ -15,12 +12,11 @@ def test():
 	print "you good"
 
 def grab_message_number(dirty_string):
-	for x in range (0, len(dirty_string)-6):
-		if dirty_string[x:x+5] == "count":
-			for y in range (x+5, len(dirty_string)-6):
-				if dirty_string[y:y+8] == "messages":
-					return int(dirty_string[x+7: y-2])
-	return 0
+	try:
+		clean_string = eval(dirty_string)["response"]["count"]
+		return int(clean_string)
+	except (KeyError, TypeError):
+		return 0
 
 def pull_message(seeking_num, token, group_id):
 	payload = {"limit":1, "token":token}
@@ -70,7 +66,7 @@ def post(text, bot_id):
 	payload = {"text":text, "bot_id":bot_id}
 	try:
 		requests.post("https://api.groupme.com/v3/bots/post", params=payload)
-	except requests.exception.ConnectionError:
+	except requests.exceptions.ConnectionError:
 		time.sleep(1)
 		post(text)
 
@@ -84,5 +80,3 @@ def analyse_and_output(message):
 	if text[0:4] == "echo":
 		post(text[4:])
 	return 0
-
-#print pull_message(0, "dbce80c042ef0133562d05f0d49317f6", "16326365")

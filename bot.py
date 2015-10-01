@@ -41,10 +41,10 @@ def analyse_and_output(message, bot_id, token, group_id):
 
 
 last_num = 0
-token = "dbce80c042ef0133562d05f0d49317f6"
-bot_id = "7e819111ff8f330b299db0679f"
-group_id = "16326365"
-while(1):
+token = raw_input("Input token: ")
+bot_id = raw_input("Input bot_id: ")
+group_id = raw_input("Input group_id: ")
+while 1:
 	message = pull_message(last_num, token, group_id)
 	print message['count']
 	if int(message['count']) > last_num:

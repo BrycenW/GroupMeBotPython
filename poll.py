@@ -1,17 +1,14 @@
 from inOut import *
 
-#[[text, previous message, [sender_id... ]... ]
-#bot_id = "7e819111ff8f330b299db0679f"
-#group_id = "16326365"
-#
-token = "dbce80c042ef0133562d05f0d49317f6"
-bot_id = "7446fe4e7613b1fdf37b00d430"
-group_id = "15781720"
+#[[text, previous message, [sender_id... ]]... ]
+token = raw_input("Input token: ")
+bot_id = raw_input("Input bot_id: ")
+group_id = raw_input("Input group_id: ")
 
 def grab_next_message_checkbot(id):
 	waiting = 1
 	i = 0
-	while(waiting == 1):
+	while waiting == 1:
 		print("pulling")
 		time.sleep(1)
 		next_message = pull_next_message(id, token, group_id)
@@ -58,9 +55,9 @@ def poll_open_end(name, question):
 		print i
 		not_voted_id.append(full_member_info[i]["user_id"])
 	print not_voted_id
-	user_responces = []
+	user_responses = []
 	for i in range (0, 1000):
-		for i in range(0, 1000):
+		for j in range(0, 1000):
 			working_message = grab_next_message_checkbot(working_id)
 			if working_message["sender_type"] == "bot":
 				working_id = working_message["id"]
@@ -68,42 +65,44 @@ def poll_open_end(name, question):
 				break
 		if "fuck you bot" in working_message["text"]:
 			post("I'm fucking off", bot_id)
-			return user_responces
+			return user_responses
 		if working_message["sender_id"] in not_voted_id:
 			not_voted_id.remove(working_message["sender_id"])
 			print working_message["name"] + " said " + working_message["text"]
-			user_responces.append([working_message["text"], working_id,
+			user_responses.append([working_message["text"], working_id,
 				[working_message["sender_id"]]])
-			print str(len(user_responces)) + " people have responded"
+			print str(len(user_responses)) + " people have responded"
 			if len(not_voted_id) == 0:
 				print "Everyone has voted!"
-				return user_responces
-			if "n" in raw_input("Would you like to continue getting responces? "):
-				return user_responces
+				return user_responses
+			if "n" in raw_input("Would you like to continue getting responses? "):
+				return user_responses
 		print working_message["sender_id"] + " not in " + str(not_voted_id)
 		working_id = working_message["id"]
-	return user_responces
+	return user_responses
 
-def generate_string_from_responces(options):
+def generate_string_from_responses(options):
 	string_options = ""
 	for i in range (0, len(options)):
 		string_options = string_options + " " + str(i) + ": " + str(options[i][0])
 	return string_options
 
-def combine_responces(options):
-	last_index = len(options) - 1
-	for i in range (0, last_index):
-		for j in range (i + 1, len(options)):
-			a_text = options[last_index - i][0]
-			b_text = options[last_index - j][0]
-			a_text.lower
-			b_text.lower
-			a_text.replace(" ", "")
-			b_text.replace(" ", "")
-			if a_text in b_text or b_text in a_text:
-				options = combine_items(options, last_index - i, last_index - j)
-				j = j - 1
-	print "The responces are " + generate_string_from_responces(options)
+def combine_responses(options):
+	i, j = 0, 0
+	while i < len(options) - 1:
+		a_text = options[last_index - i][0]
+		b_text = options[last_index - j][0]
+		a_text = a_text.lower.replace(" ", "")
+		b_text = b_text.lower.replace(" ", "")
+		if a_text in b_text or b_text in a_text:
+			options = combine_items(options, last_index - i, last_index - j)
+			j = j - 1
+		if j < len(options):
+			j += 1
+		else:
+			i += 1
+			j = i + 1
+	print "The responses are " + generate_string_from_responses(options)
 	while "y" in raw_input("Would you like to combine any options? "):
 			first = int(raw_input("What is the index of one? "))
 			second = int(raw_input("What is the index of the other? "))
@@ -142,15 +141,15 @@ def poll():
 	name = raw_input("What is your name? ")
 	question = raw_input("What question would you like to pose? ")
 	if "y" in raw_input("Is this an open ended question? "):
-		responces = poll_open_end(name, question)
+		responses = poll_open_end(name, question)
 	else:
 		print "more shit to be added later"
 		return 0
 	if "n" in raw_input("Would you like to consider likes? "):
-		return sort_by_votes(combine_responces(responces))
+		return sort_by_votes(combine_responses(responses))
 	post("Likes will be considered, so make sure to like your favorites!", bot_id)
 	raw_input("Input anything to count likes: ")
-	return sort_by_votes(combine_responces(consider_likes(responces)))
+	return sort_by_votes(combine_responses(consider_likes(responses)))
 
 def pretty_display(results):
 	for i in range(0, len(results)):
