@@ -25,6 +25,20 @@ def analyse_and_output(message, bot_id, token, group_id):
 		count = count + 2
 	return count
 
+def count_all_likes(token,group_id):
+	message = pull_message(0, token, group_id)
+	like_totals = {"count": 0}
+	while message != 1:
+		if user_id not in like_totals:
+			dict[user_id] = 0
+		like_totals[user_id] += len("favorited_by")
+		like_totals["count"] += 1
+		message = pull_prev_message(message["id"], "token", "group_id")
+	return like_totals
+
+
+
+
 
 last_num = 0
 token = raw_input("Input token: ")
