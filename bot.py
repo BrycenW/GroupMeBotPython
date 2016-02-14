@@ -19,7 +19,7 @@ def analyse_and_output(message, bot_id, token, group_id):
 		post("coming straight from the underground", bot_id)
 		count = count + 2
 	if "weather" in text:
-		weath = pywapi.get_weather_from_weather_com(['Pittsburgh'])[0]
+		weath = weather.get_weather_from_weather_com(['Pittsburgh'])[0]
 		post("Today it is " + weath['temp'], bot_id)
 		post("It is " + weath['temp'] + "F", bot_id )
 		count = count + 2

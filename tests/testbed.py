@@ -1,6 +1,6 @@
 from weather import *
 
-temp = get_weather_for_cities('Pittsburgh')
+temp = weather.get_weather_for_cities('Pittsburgh')
 print temp['current_conditions']
 #{'units': {'distance': u'mi', 'speed': u'mph', 'temperature': u'F', 'rainfall': u'in', 'pressure': u'in'}, 
 #'current_conditions': {'moon_phase': {'text': u'Waxing Gibbous', 'icon': u'9'}, 
