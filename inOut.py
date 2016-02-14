@@ -81,6 +81,25 @@ def pull_next_message(previous_id, token, group_id):
 	out_dict['count'] = str(grab_message_number(dirty_packet.content))
 	return out_dict
 
+def pull_prev_message(current_id, token, group_id):
+	payload = {"limit":1, "before_id":current_id, "token":token}
+	try:
+		dirty_packet = requests.get("https://api.groupme.com/v3/groups/" +
+			group_id + "/messages", params=payload)
+	except requests.exceptions.ConnectionError:
+		time.sleep(.5)
+		return 1
+	if "200" not in str(dirty_packet):
+		return 1
+	out_dict = eval(dirty_packet.content)["response"]["messages"]
+	if len(out_dict) == 0:
+		return 1
+	out_dict = out_dict[0]
+	out_dict['count'] = str(grab_message_number(dirty_packet.content))
+	return out_dict
+
+
+
 def post(text, bot_id):
 	payload = {"text":text, "bot_id":bot_id}
 	try:
