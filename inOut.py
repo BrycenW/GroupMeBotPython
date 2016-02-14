@@ -12,7 +12,7 @@ true = "true"
 # These are the functions available in inOut
 # token, group_id, and bot_id are all given by groupme
 # test() prints "you good"
-# pull_message(last_number, token, group_id), pulls the newest message,
+# pull_message(seeking_number, token, group_id), pulls the newest message,
 # 	but only if the message number is more than last_number
 # post(text, bot_id)	posts to this bot
 
