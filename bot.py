@@ -18,39 +18,45 @@ def analyse_and_output(message, bot_id, token, group_id):
 		post("FUCK THE POLICE", bot_id)
 		post("coming straight from the underground", bot_id)
 		count = count + 2
-	if "weather" in text:
-		weath = weather.get_weather_from_weather_com(['Pittsburgh'])[0]
-		post("Today it is " + weath['temp'], bot_id)
-		post("It is " + weath['temp'] + "F", bot_id )
-		count = count + 2
+	if "fuck" in text:
+		post("potato salad", bot_id)
+		count = count + 1
+	# if "weather" in text:
+	# 	weath = weather.get_weather_from_weather_com(['Pittsburgh'])[0]
+	# 	post("Today it is " + weath['temp'], bot_id)
+	# 	post("It is " + weath['temp'] + "F", bot_id )
+	# 	count = count + 2
 	return count
 
 def count_all_likes(token,group_id):
 	message = pull_message(0, token, group_id)
 	like_totals = {"count": 0}
 	while message != 1:
-		if user_id not in like_totals:
-			dict[user_id] = 0
-		like_totals[user_id] += len("favorited_by")
+		if message["user_id"] not in like_totals:
+			like_totals[message["user_id"]] = 0
+		like_totals[message["user_id"]] += len(message["favorited_by"])
 		like_totals["count"] += 1
-		message = pull_prev_message(message["id"], "token", "group_id")
+		message = pull_prev_message(message["id"], token, group_id)
 	return like_totals
 
 
 
 
 
+
 last_num = 0
-token = raw_input("Input token: ")
-bot_id = raw_input("Input bot_id: ")
-group_id = raw_input("Input group_id: ")
-while 1:
-	message = pull_message(last_num, token, group_id)
-	print message['count']
-	if int(message['count']) > last_num:
-		print message
-		last_num = analyse_and_output(message, bot_id, token, group_id) + int(message['count'])
-	else:
-		test()
-		time.sleep(1)
-		last_num = int(message['count'])
+token = "dbce80c042ef0133562d05f0d49317f6"#raw_input("Input token: ")
+bot_id = "7e819111ff8f330b299db0679f"#raw_input("Input bot_id: ")
+group_id = "16326365"#raw_input("Input group_id: ")
+print pull_message(0, token, group_id)
+print count_all_likes(token, group_id)
+# while 1:
+# 	message = pull_message(last_num, token, group_id)
+# 	print message['count']
+# 	if int(message['count']) > last_num:
+# 		print message
+# 		last_num = analyse_and_output(message, bot_id, token, group_id) + int(message['count'])
+# 	else:
+# 		test()
+# 		time.sleep(1)
+# 		last_num = int(message['count'])
