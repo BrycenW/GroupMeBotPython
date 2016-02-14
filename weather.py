@@ -13,13 +13,12 @@ except ImportError:
 
 API_URL = "http://www.google.com/ig/api?"
 
-def main():
-	arguments = ArgumentParser(prog="weather")
-	arguments.add_argument("--unit", choices="CF", dest="unit", default="C", help="Which unit to display the temperatures in")
-	arguments.add_argument("location", nargs="+")
-	args = arguments.parse_args(sys.argv[1:])
-
-	for location in args.location:
+# Gets the current weather from the array of cities (given as strings)
+# from the Google Weather API.  Returns an array of dictionaries, one
+# for each city, of current conditions.
+def get_weather_for_cities(cities):
+	weathers = []
+	for location in cities:
 		url = API_URL + urlencode({"weather": location})
 		xml = urlopen(url).read()
 		doc = minidom.parseString(xml)
@@ -32,39 +31,13 @@ def main():
 		condition = current_conditions.getElementsByTagName("condition")[0].getAttribute("data")
 		wind_condition = current_conditions.getElementsByTagName("wind_condition")[0].getAttribute("data")
 		humidity = current_conditions.getElementsByTagName("humidity")[0].getAttribute("data")
-
-		indent = "  "
-		print("Weather for {0}:".format(city))
-		print(indent + "{0}°{1}".format(temp, args.unit))
-		print(indent + condition)
-		print(indent + wind_condition)
-		print(indent + humidity)
-
-if __name__ == "__main__":
-	main()
-
-"""
-adys@azura ~/src/scripts % ./weather.py London Bucharest "New York"
-Weather for London:
-  14°C
-  Partly Cloudy
-  Wind: S at 12 mph
-  Humidity: 55%
-Weather for Bucharest, Bucuresti:
-  14°C
-  Partly Cloudy
-  Wind: E at 16 mph
-  Humidity: 59%
-Weather for New York, NY:
-  26°C
-  Clear
-  Wind: N at 6 mph
-  Humidity: 32%
-adys@azura ~/src/scripts % ./weather.py "Los Angeles" --unit=F     
-Weather for Los Angeles, CA:
-  64°F
-  Haze
-  Wind: N at 0 mph
-  Humidity: 68%
-"""
-
+		conds = { "forecast_information": forecast_information, 
+				"city": city, 
+				"temp": temp,
+				"current_conditions": current_conditions,
+				"condition": condition,
+				"wind_condition": wind_condition,
+				"humidity": humidity
+				}
+		weathers.append(conds)
+	return weathers
