@@ -1,11 +1,10 @@
 #Brycen Wershing
-from flask import Flask
 import requests
 import os
 import ast
 import time
 from inOut import *
-import pywapi
+from weather import *
 
 
 def analyse_and_output(message, bot_id, token, group_id):
@@ -20,23 +19,10 @@ def analyse_and_output(message, bot_id, token, group_id):
 		post("coming straight from the underground", bot_id)
 		count = count + 2
 	if "weather" in text:
-		weath = pywapi.get_weather_from_weather_com('15213', 'imperial')
-		if weath['current_conditions']['temperature'] != weath['current_conditions']['feels_like']:
-			post("but it feels like" + weath['current_conditions']['feels_like'], bot_id)
-			count = count + 1
-		if "today" in text:
-			post("The high today is " + weath['forecasts'][0]['high'] +
-				" and the low is " + weath['forecasts'][0]['low'], bot_id)
-			count = count + 1
-		elif "tomo" in text:
-			post("Tomorrow will be " + weath['forecasts'][1]['day']['text'], bot_id)
-			post("The high tomorrow is " + weath['forecasts'][1]['high'] +
-				" and the low is " + weath['forecasts'][1]['low'], bot_id)
-			count = count + 2
-		else:
-			post("Today it is " + weath['current_conditions']['text'], bot_id)
-			post("It is " + weath['current_conditions']['temperature'] + "F", bot_id )
-			count = count + 2
+		weath = weather.get_weather_from_weather_com(['Pittsburgh'])[0]
+		post("Today it is " + weath['temp'], bot_id)
+		post("It is " + weath['temp'] + "F", bot_id )
+		count = count + 2
 	return count
 
 
