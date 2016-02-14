@@ -32,11 +32,11 @@ def count_all_likes(token,group_id):
 	message = pull_message(0, token, group_id)
 	like_totals = {"count": 0}
 	while message != 1:
-		if user_id not in like_totals:
-			dict[user_id] = 0
-		like_totals[user_id] += len("favorited_by")
+		if message["user_id"] not in like_totals:
+			like_totals[message["user_id"]] = 0
+		like_totals[message["user_id"]] += len(message["favorited_by"])
 		like_totals["count"] += 1
-		message = pull_prev_message(message["id"], "token", "group_id")
+		message = pull_prev_message(message["id"], token, group_id)
 	return like_totals
 
 
@@ -48,8 +48,8 @@ last_num = 0
 token = "dbce80c042ef0133562d05f0d49317f6"#raw_input("Input token: ")
 bot_id = "7e819111ff8f330b299db0679f"#raw_input("Input bot_id: ")
 group_id = "16326365"#raw_input("Input group_id: ")
+print pull_message(0, token, group_id)
 print count_all_likes(token, group_id)
-
 # while 1:
 # 	message = pull_message(last_num, token, group_id)
 # 	print message['count']
