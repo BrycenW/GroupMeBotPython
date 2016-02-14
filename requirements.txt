@@ -1,3 +1,4 @@
+Flask==0.10.1
 html5lib==0.999
 httplib2==0.8
 pywapi==0.3.8

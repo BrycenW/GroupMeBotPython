@@ -1,5 +1,4 @@
 #Brycen Wershing
-from flask import Flask
 import requests
 import os
 import ast
