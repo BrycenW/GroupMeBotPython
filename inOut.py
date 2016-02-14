@@ -8,6 +8,24 @@ null = ""
 false = "false"
 true = "true"
 
+# ------------------------------------------------
+# These are the functions available in inOut
+# test() prints "you good"
+# pull_message(last_number, token, group_id), pulls the newest message,
+# 	but only if the message number is more than last_number
+# post(text, bot_id)	posts to this bot
+
+# The message is a dictionary which includes the following elements:
+# id: the unique indentifier of the message
+# count: the index of the number in this group
+# group_id: the id number of the group
+# text: the text of the message
+# favorited_by: a list of the users that favorited the message
+# sender_type: the type of sender, should be user for following options
+# user_id: the unique id of whoever sent the message
+# name: the name of the sender
+# -----------------------------------------------
+
 def test():
 	print "you good"
 
