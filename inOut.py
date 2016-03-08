@@ -27,6 +27,68 @@ true = "true"
 # name: the name of the sender
 # -----------------------------------------------
 
+def rename_member(bot_id, user_id, token, group_id, nickname):
+	payload = {"token":token}
+	payload2 = {"token":token, "members":[{"nickname":str(nickname), "user_id":str(user_id)}]}
+	while True:
+		try:
+			requests.post("https://api.groupme.com/v3/groups/" +
+				group_id + "/members/" + get_uid(bot_id, user_id, token, group_id) + "/remove", params=payload)
+			break
+		except requests.exceptions.ConnectionError:
+			time.sleep(1)
+	print "Here we go"
+	while True:
+		try:
+			print requests.post("https://api.groupme.com/v3/groups/" +
+				group_id + "/members/add", params=payload2).text
+			break
+		except requests.exceptions.ConnectionError:
+			time.sleep(1)
+
+
+
+
+def get_uid(bot_id, user_id, token, group_id):
+	payload = {"token":token}
+	while 1:
+		try:
+			A = requests.get("https://api.groupme.com/v3/groups/" +
+			group_id, params=payload)
+			break
+		except requests.exceptions.ConnectionError:
+			print "group id failed"
+	print A.text
+	members = eval(A.text)["response"]["members"]
+	for x in members:
+		if int(x["user_id"]) == int(user_id):
+			user_id = x["id"]
+		print user_id
+	return user_id
+
+def kick_member(bot_id, user_id, token, group_id):
+	print "kicking memeber"
+	payload = {"token":token}
+	while 1:
+		try:
+			A = requests.get("https://api.groupme.com/v3/groups/" +
+			group_id, params=payload)
+			break
+		except requests.exceptions.ConnectionError:
+			print "group id failed"
+	print A.text
+	members = eval(A.text)["response"]["members"]
+	for x in members:
+		if int(x["user_id"]) == int(user_id):
+			user_id = x["id"]
+		print user_id
+	try:
+		requests.post("https://api.groupme.com/v3/groups/" +
+			group_id + "/members/" + user_id + "/remove", params=payload)
+	except requests.exceptions.ConnectionError:
+		time.sleep(1)
+		kick_member(bot_id, user_id)
+
 def test():
 	print "you good"
 

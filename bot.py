@@ -48,9 +48,9 @@ def count_all_likes(token,group_id):
 
 
 last_num = 0
-token = "dbce80c042ef0133562d05f0d49317f6"#raw_input("Input token: ")
-bot_id = "7e819111ff8f330b299db0679f"#raw_input("Input bot_id: ")
-group_id = "15781720"#raw_input("Input group_id: "
+token = raw_input("Input token: ")
+bot_id = raw_input("Input bot_id: ")
+group_id = raw_input("Input group_id: "
 new = pull_message(0, token, group_id)
 print new
 print pull_specific_messages(new["id"], token, group_id, 5, False)
