@@ -1,0 +1,3 @@
+### groupme token ###
+### bot ID ###
+### group ID ###

@@ -48,9 +48,13 @@ def count_all_likes(token,group_id):
 
 
 last_num = 0
-token = "dbce80c042ef0133562d05f0d49317f6"#raw_input("Input token: ")
-bot_id = "7e819111ff8f330b299db0679f"#raw_input("Input bot_id: ")
-group_id = "16326365"#raw_input("Input group_id: ")
+auth = open("auth.txt", "r")
+token = auth.readline()
+bot_id = auth.readline()
+group_id = auth.readline()
+auth.close
+
+
 while 1:
 	message = pull_message(last_num, token, group_id)
 	print message['count']
